@@ -4,7 +4,7 @@ Deux outils sont disponibles:
 
 - ZoneManager pour gérer vos zones
 
-````lua
+```lua
 ZoneManager:createZone(vector3(-290.584625, -913.951660, 31.065918),5,
 function(player)
     print("Je suis entré dans la zone !")
