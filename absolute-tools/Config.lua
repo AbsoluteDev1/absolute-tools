@@ -6,4 +6,11 @@
 
 Config = {
     timeTick = 250, --- Temps entre chaque analyse de zone
+    activeDebug = true,
+    debugColor = {
+        red = 50,
+        green = 0,
+        blue = 50,
+        alpha = 70,
+    }
 }

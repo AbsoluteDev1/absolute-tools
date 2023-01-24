@@ -13,4 +13,12 @@ end,function(player)
     print("Je suis sorti de la zone !")
 end);
 
+ZoneManager:createZone(vector3(-290.584625, -913.951660, 31.065918),5,function(player)
+    print("Je suis entré dans la zone !")
+end,function(player)
+    print("Je suis dans la zone !")
+end,function(player)
+    print("Je suis sorti de la zone !")
+end);
+--- Permet de debug les zones
 ZoneManager:startDebugZone();

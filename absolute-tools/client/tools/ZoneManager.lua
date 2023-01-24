@@ -4,15 +4,12 @@
 --- ZoneManager pour la communauté.
 --- DateTime: 24/01/2023 21:42
 ---
-
+---@class ZoneManager
 ZoneManager = {};
 
-function ZoneManager:new()
-    local o = {}
-    setmetatable(o,{__index = self})
+function ZoneManager:init()
     self.zones = {};
     self.zoneIndex = 0;
-    return o;
 end
 --- Créer une zone pour manager les joueurs à l'intérieur
 ---@param coords table
@@ -22,6 +19,32 @@ end
 ---@param onExit function
 function ZoneManager:createZone(coords,radius,onEnter,onUpdate,onExit)
     self.zoneIndex = self.zoneIndex + 1;
+
+    local zone = {
+        id = self.zoneIndex,
+        isInZone = false,
+        coords = coords,
+        radius = radius,
+        onEnter = onEnter,
+        onUpdate = onUpdate,
+        onExit = onExit,
+        players = {},
+    };
+    self.zones["zone"..self.zoneIndex] = zone;
+    self.closestZones = {};
+    self.debugDistance = 100;
+    return "zone"..self.zoneIndex;
+end
+
+--- Créer une zone pour manager les joueurs à l'intérieur
+---@param coords table
+---@param radius number
+---@param onEnter function
+---@param onUpdate function
+---@param onExit function
+function ZoneManager:createZoneWithJson(coords,radius,onEnter,onUpdate,onExit)
+    self.zoneIndex = self.zoneIndex + 1;
+
     local zone = {
         id = self.zoneIndex,
         isInZone = false,
@@ -46,7 +69,6 @@ function ZoneManager:tickAnalyze()
             local playerCoords = GetEntityCoords(PlayerPedId());
             for k,zone in pairs(self.zones) do
                 local distance = #(playerCoords - zone.coords);
-                print(distance,self.debugDistance,self.debug and distance <= self.debugDistance)
                 if self.debug and distance <= self.debugDistance then
                     self.closestZones[k] = zone
                 else
@@ -80,7 +102,7 @@ function ZoneManager:startDebugZone()
     Citizen.CreateThread(function()
         while self.debug do
             for i,zone in pairs(self.closestZones) do
-                DrawMarker(28, zone.coords.x, zone.coords.y, zone.coords.z, 0, 0, 0, 0, 0, 0, zone.radius +.0, zone.radius +.0, zone.radius+.0, 0, 50, 50, 40, 0, 0, 0, 0, 0, 0, 0);
+                DrawMarker(28, zone.coords.x, zone.coords.y, zone.coords.z, 0, 0, 0, 0, 0, 0, zone.radius +.0, zone.radius +.0, zone.radius+.0, Config.debugColor.red, Config.debugColor.green, Config.debugColor.blue, 40, 0, 0, 0, 0, 0, 0, 0);
             end
             Wait(0);
         end
@@ -99,13 +121,13 @@ function ZoneManager:setZone(id,zone)
     self.zones[id] = zone;
 end
 
-function ZoneManager:delete(id)
-    self.zone[id] = nil;
+function ZoneManager:deleteZone(id)
+    self.zones[id] = nil;
 end
 
-local zoneManager = ZoneManager:new();
+ZoneManager:init();
 --- on analyse les zones
-zoneManager:tickAnalyze();
+ZoneManager:tickAnalyze();
 
 exports("createZone",function(coords,radius,onEnter,onUpdate,onExit)
     return zoneManager:createZone(coords,radius,onEnter,onUpdate,onExit);
@@ -118,4 +140,20 @@ end);
 exports("setZone",function(id,zone)
     zoneManager:setZone(id,zone);
 end);
+
+exports("deleteZone",function(id)
+    zoneManager:deleteZone(id)
+end)
+
+if Config.activeDebug then
+    local debug = false;
+    RegisterCommand("zoneDebug",function()
+        debug = not debug;
+        if debug then
+            zoneManager:startDebugZone();
+        else
+            zoneManager:stopDebugZone();
+        end
+    end)
+end
 
