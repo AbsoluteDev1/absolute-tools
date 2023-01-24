@@ -42,7 +42,7 @@ end
 ---@param onEnter function
 ---@param onUpdate function
 ---@param onExit function
-function ZoneManager:createZoneWithJson(coords,radius,onEnter,onUpdate,onExit)
+function ZoneManager:createZoneWithJson(coords,radius,data)
     self.zoneIndex = self.zoneIndex + 1;
 
     local zone = {
@@ -50,9 +50,9 @@ function ZoneManager:createZoneWithJson(coords,radius,onEnter,onUpdate,onExit)
         isInZone = false,
         coords = coords,
         radius = radius,
-        onEnter = onEnter,
-        onUpdate = onUpdate,
-        onExit = onExit,
+        onEnter = data.onEnter,
+        onUpdate = data.onUpdate,
+        onExit = data.onExit,
         players = {},
     };
     self.zones["zone"..self.zoneIndex] = zone;
