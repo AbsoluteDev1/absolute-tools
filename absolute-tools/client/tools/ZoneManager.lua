@@ -130,19 +130,19 @@ ZoneManager:init();
 ZoneManager:tickAnalyze();
 
 exports("createZone",function(coords,radius,onEnter,onUpdate,onExit)
-    return zoneManager:createZone(coords,radius,onEnter,onUpdate,onExit);
+    return ZoneManager:createZone(coords,radius,onEnter,onUpdate,onExit);
 end);
 
 exports("getZone",function(id)
-    return zoneManager:getZone(id);
+    return ZoneManager:getZone(id);
 end);
 
 exports("setZone",function(id,zone)
-    zoneManager:setZone(id,zone);
+    ZoneManager:setZone(id,zone);
 end);
 
 exports("deleteZone",function(id)
-    zoneManager:deleteZone(id)
+    ZoneManager:deleteZone(id)
 end)
 
 if Config.activeDebug then
@@ -150,9 +150,9 @@ if Config.activeDebug then
     RegisterCommand("zoneDebug",function()
         debug = not debug;
         if debug then
-            zoneManager:startDebugZone();
+            ZoneManager:startDebugZone();
         else
-            zoneManager:stopDebugZone();
+            ZoneManager:stopDebugZone();
         end
     end)
 end
