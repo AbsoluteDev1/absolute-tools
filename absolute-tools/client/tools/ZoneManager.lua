@@ -66,6 +66,7 @@ function ZoneManager:tickAnalyze()
     Citizen.CreateThread(function()
         while true do
             Wait(Config.timeTick);
+            self.closestZones = {};
             local playerCoords = GetEntityCoords(PlayerPedId());
             for k,zone in pairs(self.zones) do
                 local distance = #(playerCoords - zone.coords);
@@ -122,7 +123,9 @@ function ZoneManager:setZone(id,zone)
 end
 
 function ZoneManager:deleteZone(id)
-    self.zones[id] = nil;
+    if id then
+        self.zones[id] = nil;
+    end
 end
 
 ZoneManager:init();
