@@ -17,7 +17,8 @@ end
 ---@param onEnter function
 ---@param onUpdate function
 ---@param onExit function
-function ZoneManager:createZone(coords,radius,onEnter,onUpdate,onExit)
+---@return string retour l'id de la zone pour pouvoir la supprimer
+function ZoneManager:createZone(coords,radius,onEnter,onUpdate,onExit,onTick)
     self.zoneIndex = self.zoneIndex + 1;
 
     local zone = {
@@ -28,6 +29,7 @@ function ZoneManager:createZone(coords,radius,onEnter,onUpdate,onExit)
         onEnter = onEnter,
         onUpdate = onUpdate,
         onExit = onExit,
+        onTick = onTick,
         players = {},
     };
     self.zones["zone"..self.zoneIndex] = zone;
@@ -53,6 +55,7 @@ function ZoneManager:createZoneWithJson(coords,radius,data)
         onEnter = data.onEnter,
         onUpdate = data.onUpdate,
         onExit = data.onExit,
+        onTick = data.onTick,
         players = {},
     };
     self.zones["zone"..self.zoneIndex] = zone;
@@ -69,6 +72,7 @@ function ZoneManager:tickAnalyze()
             self.closestZones = {};
             local playerCoords = GetEntityCoords(PlayerPedId());
             for k,zone in pairs(self.zones) do
+                TickManager:removeTick("zone_on_press_"..zone.id);
                 local distance = #(playerCoords - zone.coords);
                 if self.debug and distance <= self.debugDistance then
                     self.closestZones[k] = zone
@@ -79,17 +83,22 @@ function ZoneManager:tickAnalyze()
                     if not zone.isInZone then
                         zone.isInZone = true;
                         if zone.onEnter then
-                            zone.onEnter(zone);
+                            zone.onEnter(zone,distance);
                         end
                     end
                     if zone.onUpdate then
-                        zone.onUpdate(zone);
+                        zone.onUpdate(zone,distance);
+                        if zone.onTick then
+                            TickManager:addTick("zone_on_press_"..zone.id,function()
+                                zone.onTick(zone,distance);
+                            end)
+                        end
                     end
                 else
                     if zone.isInZone then
                         zone.isInZone = false;
                         if zone.onExit then
-                            zone.onExit(zone);
+                            zone.onExit(zone,distance);
                         end
                     end
                 end
@@ -125,6 +134,7 @@ end
 function ZoneManager:deleteZone(id)
     if id then
         self.zones[id] = nil;
+        TickManager:removeTick("zone_on_press_"..id);
     end
 end
 

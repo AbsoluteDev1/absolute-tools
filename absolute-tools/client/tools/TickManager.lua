@@ -15,7 +15,9 @@ function TickManager:addTick(name,func)
 end
 
 function TickManager:removeTick(name)
-    self.ticks[name] = nil;
+    if self.ticks[name] then
+        self.ticks[name] = nil;
+    end
 end
 
 function TickManager:analayze()

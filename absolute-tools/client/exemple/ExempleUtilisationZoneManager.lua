@@ -24,6 +24,25 @@ end,function(player)
     print("Je suis dans la zone !")
 end,function(player)
     print("Je suis sorti de la zone !")
+end,function(zone,distancePlayerToCenterZone)
+    if IsControlPressed(0, 38) and distancePlayerToCenterZone < 2.0 then
+        print("Je suis dans la zone et j'appuie sur E !")
+    end
 end);
+
+ZoneManager:createZoneWithJson({
+    coords = vector3(-290.584625, -913.951660, 31.065918),
+    radius = 5,
+    onEnter = function(player)
+        print("Je suis entré dans la zone !")
+    end,
+    onUpdate = function(player)
+        print("Je suis dans la zone !")
+    end,
+    onExit = function(player)
+        print("Je suis sorti de la zone !")
+    end,
+});
+
 --- Permet de debug les zones
 ZoneManager:startDebugZone();
